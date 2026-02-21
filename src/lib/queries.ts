@@ -1,33 +1,19 @@
 import { supabase } from './supabase'
+import { dogs as localDogs } from '../data/dogs'
 import type { Dog, DogUpdate } from '../types'
 
-// ── Dogs ──
+// ── Dogs (served from local data) ──
 
 export async function fetchDogs(): Promise<Dog[]> {
-  const { data, error } = await supabase
-    .from('dogs')
-    .select('*')
-    .order('created_at', { ascending: true })
-
-  if (error) throw error
-  return data as Dog[]
+  return localDogs
 }
 
 export async function fetchDog(id: string): Promise<Dog | null> {
-  const { data, error } = await supabase
-    .from('dogs')
-    .select('*')
-    .eq('id', id)
-    .single()
-
-  if (error) {
-    if (error.code === 'PGRST116') return null // not found
-    throw error
-  }
-  return data as Dog
+  return localDogs.find((d) => d.id === id) ?? null
 }
 
 export async function fetchDogUpdates(dogId: string): Promise<DogUpdate[]> {
+  if (!supabase) return []
   const { data, error } = await supabase
     .from('dog_updates')
     .select('*')
@@ -39,34 +25,18 @@ export async function fetchDogUpdates(dogId: string): Promise<DogUpdate[]> {
 }
 
 export async function fetchDogStats() {
-  const { count: dogCount } = await supabase
-    .from('dogs')
-    .select('*', { count: 'exact', head: true })
-
-  const { count: sponsorCount } = await supabase
-    .from('dogs')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_sponsored', true)
-
-  const { data: donations } = await supabase
-    .from('donations')
-    .select('amount, currency')
-    .eq('payment_status', 'completed')
-
-  const totalRaised = donations?.reduce((sum, d) => {
-    return sum + (d.currency === 'USD' ? Number(d.amount) : Number(d.amount) / 16000)
-  }, 0) ?? 0
-
+  const sponsored = localDogs.filter((d) => d.is_sponsored).length
   return {
-    dogsRescued: dogCount ?? 0,
-    activeSponsors: sponsorCount ?? 0,
-    totalRaised: Math.round(totalRaised),
+    dogsRescued: localDogs.length,
+    activeSponsors: sponsored,
+    totalRaised: 0,
   }
 }
 
 // ── User data ──
 
 export async function fetchUserDonations(userId: string) {
+  if (!supabase) return []
   const { data, error } = await supabase
     .from('donations')
     .select('*, dogs(name)')
@@ -78,6 +48,7 @@ export async function fetchUserDonations(userId: string) {
 }
 
 export async function fetchUserSponsoredDogs(userId: string): Promise<Dog[]> {
+  if (!supabase) return []
   const { data, error } = await supabase
     .from('dogs')
     .select('*')
@@ -96,6 +67,7 @@ export async function createDog(dog: {
   monthly_amount_usd: number
   monthly_amount_idr: number
 }) {
+  if (!supabase) throw new Error('Database not configured')
   const { data, error } = await supabase
     .from('dogs')
     .insert(dog)
@@ -107,6 +79,7 @@ export async function createDog(dog: {
 }
 
 export async function updateDog(id: string, updates: Partial<Dog>) {
+  if (!supabase) throw new Error('Database not configured')
   const { data, error } = await supabase
     .from('dogs')
     .update(updates)
@@ -119,6 +92,7 @@ export async function updateDog(id: string, updates: Partial<Dog>) {
 }
 
 export async function deleteDog(id: string) {
+  if (!supabase) throw new Error('Database not configured')
   const { error } = await supabase
     .from('dogs')
     .delete()
@@ -135,6 +109,7 @@ export async function createDogUpdate(update: {
   photo_url?: string
   posted_by: string
 }) {
+  if (!supabase) throw new Error('Database not configured')
   const { data, error } = await supabase
     .from('dog_updates')
     .insert(update)

@@ -79,4 +79,43 @@ export const dogs: Dog[] = [
     sponsor_id: null,
     created_at: '2025-09-03T09:20:00Z',
   },
+  {
+    id: 'dog-007',
+    name: 'Coco',
+    photo_url:
+      'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&h=400&fit=crop&crop=face',
+    story:
+      'Coco was found as a tiny puppy abandoned in a cardboard box outside a convenience store in Kuta. She was barely three weeks old and needed bottle feeding every two hours. Our volunteers took turns through the night to keep her alive. She has since grown into a bouncy, mischievous girl who steals sandals and hides them under the shelter porch.',
+    monthly_amount_usd: 25,
+    monthly_amount_idr: 400000,
+    is_sponsored: false,
+    sponsor_id: null,
+    created_at: '2025-10-14T07:30:00Z',
+  },
+  {
+    id: 'dog-008',
+    name: 'Bima',
+    photo_url:
+      'https://images.unsplash.com/photo-1477884213360-7e9d7dcc8f9b?w=600&h=400&fit=crop&crop=face',
+    story:
+      'Bima is an older dog who was surrendered by a family leaving Bali. He spent his whole life as a house dog and was completely lost when he arrived at the shelter. He took weeks to trust anyone again. Now he has become the calming presence the other dogs rely on — always the first to greet nervous new arrivals with a gentle nudge of his grey muzzle.',
+    monthly_amount_usd: 25,
+    monthly_amount_idr: 400000,
+    is_sponsored: true,
+    sponsor_id: null,
+    created_at: '2025-11-01T11:00:00Z',
+  },
+  {
+    id: 'dog-009',
+    name: 'Sari',
+    photo_url:
+      'https://images.unsplash.com/photo-1544568100-847a948585b9?w=600&h=400&fit=crop&crop=face',
+    story:
+      'Sari was rescued from a rubbish tip near Jimbaran where she had been scavenging for weeks. She came in severely underweight with a fractured front leg that had never been treated. After surgery and two months of rehabilitation she is fully healed and has the most joyful spirit of any dog at the shelter. Sari means "essence" in Balinese, and she is the very essence of resilience.',
+    monthly_amount_usd: 25,
+    monthly_amount_idr: 400000,
+    is_sponsored: false,
+    sponsor_id: null,
+    created_at: '2025-12-20T15:45:00Z',
+  },
 ]

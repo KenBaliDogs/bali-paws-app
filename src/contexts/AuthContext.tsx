@@ -22,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   async function fetchProfile(userId: string) {
+    if (!supabase) return null
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -36,9 +37,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    // onAuthStateChange is the single source of truth.
-    // It fires immediately with the stored session (if any),
-    // so we don't need a separate getSession call.
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session)
@@ -57,12 +60,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function signIn(email: string, password: string) {
+    if (!supabase) return { error: 'Auth not configured' }
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) return { error: error.message }
     return { error: null }
   }
 
   async function signUp(email: string, password: string, name: string) {
+    if (!supabase) return { error: 'Auth not configured' }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -74,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
+    if (!supabase) return
     await supabase.auth.signOut()
     setProfile(null)
   }
